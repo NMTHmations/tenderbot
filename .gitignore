@@ -4,3 +4,4 @@ profile/
 database/
 dataset/
 .DS_Store
+pretrained_model.keras
