@@ -33,7 +33,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     try:
-        if args.command == 'SwipeAutomator':
+        if args.command == 'AutoSwipe':
             swiper = SwipeAutomator.SwipeAutomator(args.phone,
                                           args.file,
                                           args.start if args.start != None else 18,
