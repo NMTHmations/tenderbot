@@ -75,13 +75,10 @@ class SwipeAutomator(IAutomat):
     def SwipeCNN(self, cnn=True):
         sleep(3)
         if cnn == True:
-            if self.filename == None:
-                self._ErrorMessage("Before you dive in, please generate the model or turn off the AI switch!")
+            if (os.path.exists(self.filename)):
+                model = load_model(self.filename)
             else:
-                if (os.path.exists(self.filename)):
-                    model = load_model(self.filename)
-                else:
-                    self._ErrorMessage("The given file does not exists!")
+                self._ErrorMessage("The given file does not exists!")
         try_count = 0
         opened = True
         while True:
