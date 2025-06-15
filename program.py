@@ -29,6 +29,7 @@ if __name__ == "__main__":
     collectPhotos.add_argument('-p','--phone',type=int,required=True,help="Phone number")
     collectPhotos.add_argument('-cT','--cropTop',type=str,required=True,help="Top cropping position")
     collectPhotos.add_argument('-cB','--cropBottom',type=str,required=True,help="Bottom cropping position")
+    collectPhotos.add_argument('-i','--iterations',type=int,required=True,help="Number of iterations")
     
     args = parser.parse_args()
     
@@ -51,7 +52,7 @@ if __name__ == "__main__":
             if len(args.cropTop.split(',')) == 2 and len(args.cropBottom.split(',')) == 2:
                 cropTop = (int(args.cropTop.split(',')[0]),int(args.cropTop.split(',')[1]))
                 cropBottom = (int(args.cropBottom.split(',')[0]),int(args.cropBottom.split(',')[1]))
-                profiles = CollectProfilePhotos.CollectProfilePhotos(args.phone,cropTop,cropBottom)
+                profiles = CollectProfilePhotos.CollectProfilePhotos(args.phone,cropTop,cropBottom,args.iterations)
                 profiles.yieldPhotos()
             else:
                 raise Exception("Invalid cropTop or cropBottom format")

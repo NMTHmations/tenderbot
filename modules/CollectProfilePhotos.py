@@ -12,16 +12,17 @@ import os
 import traceback
 
 class CollectProfilePhotos(IAutomat):
-    def __init__(self, phone, cropTop:tuple, cropBottom:tuple):
+    def __init__(self, phone, cropTop:tuple, cropBottom:tuple, iterations:int):
         super().__init__(phone)
         self.crop_box = None
         if len(cropBottom) == 2 and len(cropTop) == 2:
             self.crop_box = tuple(list(cropTop) + list(cropBottom))
+        self.iterations = iterations
     
     def yieldPhotos(self):
         sleep(3)
         try_count = 0
-        for i in range(100):
+        for i in range(self.iterations):
             try:
                 if os.path.exists(f"{os.getcwd()}/pics/") == False:
                     os.mkdir("pics")
