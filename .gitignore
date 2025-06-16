@@ -5,3 +5,8 @@ database/
 dataset/
 .DS_Store
 pretrained_model.keras
+modules/__pycache__/CollectProfilePhotos.cpython-311.pyc
+modules/__pycache__/TrainModel.cpython-311.pyc
+modules/__pycache__/SwipeAutomator.cpython-311.pyc
+modules/__pycache__/LoginAgent.cpython-311.pyc
+modules/__pycache__/IAutomat.cpython-311.pyc

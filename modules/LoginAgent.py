@@ -5,6 +5,9 @@ from selenium.webdriver.chrome.options import Options
 import selenium.webdriver.firefox.options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.firefox import GeckoDriverManager
 from time import sleep
 import os
 
@@ -42,22 +45,21 @@ class LoginAgent():
                 WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.XPATH, '//*[@aria-labelledby="MODAL_LOGIN"]')))
                 sleep(10)
                 WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'c1p6lbu0')))
+        sleep(180)
         return driver
     
     def LoginWithProfile(self):
+        chrome_options = Options()
+        chrome_options.add_argument(f"--start-maximized")
+        chrome_options.add_argument(f"user-data-dir={os.getcwd()}/profile/")
         try:
-            chrome_options = Options()
-            chrome_options.add_argument(f"--start-maximized")
-            chrome_options.add_argument(f"user-data-dir={os.getcwd()}/profile/")
             driver = webdriver.Chrome(options=chrome_options)
             driver.get("https://tinder.com/hu")
             sleep(3)
             return driver
         except Exception as e:
-            options = selenium.webdriver.firefox.options.Options()
-            options.profile = f"{os.getcwd()}/profile/"
-            driver = webdriver.Firefox(options=options)
+            service = ChromeService(executable_path="/usr/bin/chromedriver")
+            driver = webdriver.Chrome(service=service, options=chrome_options)
             driver.get("https://tinder.com/hu")
-            driver.maximize_window()
             sleep(3)
             return driver

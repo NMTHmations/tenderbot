@@ -30,8 +30,9 @@ class CollectProfilePhotos(IAutomat):
                 if lista[-3].is_displayed() and lista[-3].text == "TETSZIK":
                     self.driver.save_screenshot(filename=f"{os.getcwd()}/pics/{i}.png")
                     image = Image.open(f"{os.getcwd()}/pics/{i}.png")
-                    cropped_image = image.crop(self.crop_box)
-                    cropped_image.save(f"{os.getcwd()}/pics/{i}.png")
+                    if self.crop_box != None:
+                        image = image.crop(self.crop_box)
+                    image.save(f"{os.getcwd()}/pics/{i}.png")
                     lista[-3].click()
                 else:
                     self.driver.get("https://tinder.com/")

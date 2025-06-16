@@ -27,8 +27,8 @@ if __name__ == "__main__":
     
     collectPhotos = subparsers.add_parser('collectPhotos',help="Collect photos for learning")
     collectPhotos.add_argument('-p','--phone',type=int,required=True,help="Phone number")
-    collectPhotos.add_argument('-cT','--cropTop',type=str,required=True,help="Top cropping position")
-    collectPhotos.add_argument('-cB','--cropBottom',type=str,required=True,help="Bottom cropping position")
+    collectPhotos.add_argument('-cT','--cropTop',type=str,required=False,help="Top cropping position")
+    collectPhotos.add_argument('-cB','--cropBottom',type=str,required=False,help="Bottom cropping position")
     collectPhotos.add_argument('-i','--iterations',type=int,required=True,help="Number of iterations")
     
     args = parser.parse_args()

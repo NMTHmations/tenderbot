@@ -100,6 +100,7 @@ class SwipeAutomator(IAutomat):
                         sleep(1796.5)
                     else:
                         try_count += 1
+                        sleep(30)
                     sleep(3)
                 sleep(0.5)
             if opened == True:
