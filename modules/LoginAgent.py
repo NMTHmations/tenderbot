@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.chrome.options import Options
+import selenium.webdriver.firefox.options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from time import sleep
@@ -53,10 +54,10 @@ class LoginAgent():
             sleep(3)
             return driver
         except Exception as e:
-            profile = FirefoxProfile(f"{os.getcwd()}/profile/")
-            options = Options()
-            options.add_argument("--start-maximized")
-            driver = webdriver.Firefox(firefox_profile=profile, options=options)
+            options = selenium.webdriver.firefox.options.Options()
+            options.profile = f"{os.getcwd()}/profile/"
+            driver = webdriver.Firefox(options=options)
             driver.get("https://tinder.com/hu")
+            driver.maximize_window()
             sleep(3)
             return driver
