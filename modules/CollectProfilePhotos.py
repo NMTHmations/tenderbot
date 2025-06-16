@@ -20,7 +20,7 @@ class CollectProfilePhotos(IAutomat):
         self.iterations = iterations
     
     def yieldPhotos(self):
-        sleep(3)
+        sleep(30)
         try_count = 0
         for i in range(self.iterations):
             try:

@@ -17,11 +17,12 @@ from tensorflow.keras.preprocessing.image import img_to_array
 
 
 class SwipeAutomator(IAutomat):
-    def __init__(self,phone,filename,startDate=18,endDate=22):
+    def __init__(self,phone,filename,startDate=18,endDate=22,cropTop = None, cropBottom = None):
         super().__init__(phone)
         end = datetime.datetime(datetime.datetime.now().year,datetime.datetime.now().month,datetime.datetime.now().day,endDate,0,0)
         self.startDate = datetime.datetime(datetime.datetime.now().year,datetime.datetime.now().month,datetime.datetime.now().day,startDate,0,0)
         self.endDate = end if endDate > datetime.datetime.now().hour else end + datetime.timedelta(days=1.0)
+        self.cropBox = tuple(list(cropTop) + list(cropBottom)) if cropTop != None and cropBottom != None else None
         self.filename = filename
     
     def _SwipeRight(self,lista,isRight=True):
@@ -60,8 +61,7 @@ class SwipeAutomator(IAutomat):
         if cnn:
             image = self.driver.get_screenshot_as_png()
             image = Image.open(io.BytesIO(image))
-            crop_box = (1616, 90, 2162, 1034)
-            cropped_image = image.crop(crop_box)
+            cropped_image = image.crop(self.cropBox)
             resized_image = cropped_image.resize((224, 224))
             img_array = img_to_array(resized_image )
             img_array = img_array / 255.0

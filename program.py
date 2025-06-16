@@ -14,6 +14,8 @@ if __name__ == "__main__":
     swipe.add_argument('-s','--start',type=int,required=False,help="Set starting hours (default 6pm)")
     swipe.add_argument('-e','--end',type=int,required=False,help="Set ending hours (default 10pm)")
     swipe.add_argument('-p','--phone',type=int,required=True,help="Phone number")
+    swipe.add_argument('-cT','--cropTop',type=str,required=False,help="Top cropping position")
+    swipe.add_argument('-cB','--cropBottom',type=str,required=False,help="Bottom cropping position")
     swipe.add_argument('--noCNN',required=False,help="Disable CNN model. The tool swipes always right",action='store_false')
     
     model = subparsers.add_parser('TrainModel',help="Train convolutional neural network (CNN) model based on dataset")
@@ -35,11 +37,25 @@ if __name__ == "__main__":
     
     try:
         if args.command == 'AutoSwipe':
-            swiper = SwipeAutomator.SwipeAutomator(args.phone,
+            if args.noCNN == False:
+                if len(args.cropTop.split(',')) == 2 and len(args.cropBottom.split(',')) == 2:
+                    cropTop = (int(args.cropTop.split(',')[0]),int(args.cropTop.split(',')[1]))
+                    cropBottom = (int(args.cropBottom.split(',')[0]),int(args.cropBottom.split(',')[1]))
+                    swiper = SwipeAutomator.SwipeAutomator(args.phone,
+                                          args.file,
+                                          args.start if args.start != None else 18,
+                                          args.end if args.end != None else 22,
+                                          cropTop= cropTop,
+                                          cropBottom= cropBottom)
+                    swiper.SwipeCNN(args.noCNN)
+                else:
+                    raise Exception("Invalid cropTop or cropBottom format")
+            else:
+                swiper = SwipeAutomator.SwipeAutomator(args.phone,
                                           args.file,
                                           args.start if args.start != None else 18,
                                           args.end if args.end != None else 22)
-            swiper.SwipeCNN(args.noCNN)
+                swiper.SwipeCNN(args.noCNN)
         elif args.command == "TrainModel":
             model = TrainModel.TrainModel(args.train,args.test,
                                           args.batch if args.batch != None else 10,
@@ -49,13 +65,18 @@ if __name__ == "__main__":
                                           args.file)
             model.GenerateModel()
         elif args.command == "collectPhotos":
-            if len(args.cropTop.split(',')) == 2 and len(args.cropBottom.split(',')) == 2:
-                cropTop = (int(args.cropTop.split(',')[0]),int(args.cropTop.split(',')[1]))
-                cropBottom = (int(args.cropBottom.split(',')[0]),int(args.cropBottom.split(',')[1]))
-                profiles = CollectProfilePhotos.CollectProfilePhotos(args.phone,cropTop,cropBottom,args.iterations)
-                profiles.yieldPhotos()
+            if args.cropTop != None and args.cropBottom != None:
+                if len(args.cropTop.split(',')) == 2 and len(args.cropBottom.split(',')) == 2:
+                    cropTop = (int(args.cropTop.split(',')[0]),int(args.cropTop.split(',')[1]))
+                    cropBottom = (int(args.cropBottom.split(',')[0]),int(args.cropBottom.split(',')[1]))
+                    profiles = CollectProfilePhotos.CollectProfilePhotos(args.phone,cropTop,cropBottom,args.iterations)
+                    profiles.yieldPhotos()
+            
+                else:
+                    raise Exception("Invalid cropTop or cropBottom format")
             else:
-                raise Exception("Invalid cropTop or cropBottom format")
+                profiles = CollectProfilePhotos.CollectProfilePhotos(args.phone,(),(),args.iterations)
+                profiles.yieldPhotos()
     except Exception as e:
         traceback.print_exc()
         exit(1)
