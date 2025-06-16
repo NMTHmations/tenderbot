@@ -47,7 +47,7 @@ class LoginAgent():
         try:
             chrome_options = Options()
             chrome_options.add_argument(f"--start-maximized")
-            chrome_options.add_argument(f"user-data-dir=os.getcwd()}/profile/")
+            chrome_options.add_argument(f"user-data-dir={os.getcwd()}/profile/")
             driver = webdriver.Chrome(options=chrome_options)
             driver.get("https://tinder.com/hu")
             sleep(3)
