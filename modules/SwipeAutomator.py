@@ -94,15 +94,15 @@ class SwipeAutomator(IAutomat):
                     print("Cannot find the needed button. Retrying...",file=sys.stderr)
                     traceback.print_exc()
                     if try_count == 3:
-                        break
-                    try_count += 1
+                        self.driver.close()
+                        opened = False
+                        try_count = 0
+                        sleep(1796.5)
+                    else:
+                        try_count += 1
                     sleep(3)
                 sleep(0.5)
             if opened == True:
                 self.driver.close()
                 opened = False
-            if try_count == 3:
-                try_count = 0
-                sleep(1800)
-            else:
-                sleep(2)
+            sleep(2)
