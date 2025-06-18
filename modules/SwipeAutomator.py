@@ -83,7 +83,7 @@ class SwipeAutomator(IAutomat):
         opened = True
         while True:
             while self.startDate <= datetime.datetime.now() and datetime.datetime.now() <= self.endDate:
-                print(f"Swiping started at {datetime.datetime.now().year}-{datetime.datetime.now().month}-{datetime.datetime.now().day}: {datetime.datetime.now().hour}:{datetime.datetime.now().minute}:{datetime.datetime.now().second}")
+                print(f"Swiped at {datetime.datetime.now().year}-{datetime.datetime.now().month}-{datetime.datetime.now().day}: {datetime.datetime.now().hour}:{datetime.datetime.now().minute}:{datetime.datetime.now().second}")
                 if opened == False:
                     self.driver = self.login.LoginWithProfile()
                     opened = True
