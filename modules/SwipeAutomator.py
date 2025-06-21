@@ -12,18 +12,31 @@ import traceback
 import datetime
 import numpy as np
 from modules.IAutomat import IAutomat
+from modules.MailSender import MailSender
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
+from dotenv import load_dotenv
+import os
 
+mail = MailSender(os.getenv("FROM"),os.getenv("TO"))
 
 class SwipeAutomator(IAutomat):
     def __init__(self,phone,filename,startDate=18,endDate=22,cropTop = None, cropBottom = None):
         super().__init__(phone)
-        end = datetime.datetime(datetime.datetime.now().year,datetime.datetime.now().month,datetime.datetime.now().day,endDate,0,0)
-        self.startDate = datetime.datetime(datetime.datetime.now().year,datetime.datetime.now().month,datetime.datetime.now().day,startDate,0,0)
-        self.endDate = end if endDate > datetime.datetime.now().hour else end + datetime.timedelta(days=1.0)
+        self.InEnd = endDate
+        self.InStart = startDate
+        self.startDate = self._setStart()
+        self.endDate = self._setEnd()
         self.cropBox = tuple(list(cropTop) + list(cropBottom)) if cropTop != None and cropBottom != None else None
         self.filename = filename
+        self._SendInfoTimes()
+        
+    def _setEnd(self):
+        end = datetime.datetime(datetime.datetime.now().year,datetime.datetime.now().month,datetime.datetime.now().day,self.InEnd,0,0)
+        return end if self.InEnd > self.startDate.hour else end + datetime.timedelta(days=1.0)
+    
+    def _setStart(self):
+        return datetime.datetime(datetime.datetime.now().year,datetime.datetime.now().month,datetime.datetime.now().day,self.InStart,0,0)
     
     def _SwipeRight(self,lista,isRight=True):
         num = -3 if isRight else -5
@@ -32,6 +45,14 @@ class SwipeAutomator(IAutomat):
             lista[num].click()
         else:
             raise Exception("Element not found!")
+        
+    def _SendInfoTimes(self):
+        info = f"""
+                Dear User,
+                Start of automated swiping scheduled at {self.startDate.year}-{self.startDate.month}-{self.startDate.day}: {self.startDate.hour}:{self.startDate.minute}:{self.startDate.second} {datetime.datetime.now().tzinfo.tzname()}.
+                End of automated swiping scheduled at {self.endDate.year}-{self.endDate.month}-{self.endDate.day}: {self.endDate.hour}:{self.endDate.minute}:{self.endDate.second} {datetime.datetime.now().tzinfo.tzname()}
+                """
+        mail.SendMail("Notification: Swiping scheduled","Notification",info)
     
     def _IgnoreSuperLikes(self):
         isGood = True
@@ -53,6 +74,7 @@ class SwipeAutomator(IAutomat):
     
     def _ErrorMessage(self,message):
         print(message,file=sys.stderr)
+        mail.SendMail(f"Error: {message}","Error",message=f"{message} \n Please check the running agent! \n Tenderbot \n")
         exit(-1)
     
     def _ExecuteSwipes(self,model,cnn):
@@ -82,6 +104,10 @@ class SwipeAutomator(IAutomat):
         try_count = 0
         opened = True
         while True:
+            if self.startDate.day != datetime.datetime.now().day:
+                self.startDate = self._setStart()
+                self.endDate = self._setEnd()
+                self._SendInfoTimes()
             while self.startDate <= datetime.datetime.now() and datetime.datetime.now() <= self.endDate:
                 print(f"Swiped at {datetime.datetime.now().year}-{datetime.datetime.now().month}-{datetime.datetime.now().day}: {datetime.datetime.now().hour}:{datetime.datetime.now().minute}:{datetime.datetime.now().second}")
                 if opened == False:
@@ -90,6 +116,7 @@ class SwipeAutomator(IAutomat):
                 try:
                     self._ExecuteSwipes(model,cnn)
                 except Exception as e:
+                    mail.SendMail(f"Warning: Exception happened!","Warning",message=f"Exception happened!")
                     if self._IgnoreSuperLikes():
                         continue
                     print("Cannot find the needed button. Retrying...",file=sys.stderr)
@@ -106,5 +133,6 @@ class SwipeAutomator(IAutomat):
                 sleep(0.5)
             if opened == True:
                 self.driver.close()
+                mail.SendMail(f"Notification: Tinder closed","Notification",message=f"Tinder closed.")
                 opened = False
             sleep(2)
