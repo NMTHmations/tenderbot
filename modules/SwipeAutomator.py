@@ -49,8 +49,8 @@ class SwipeAutomator(IAutomat):
     def _SendInfoTimes(self):
         info = f"""
                 Dear User,
-                Start of automated swiping scheduled at {self.startDate.year}-{self.startDate.month}-{self.startDate.day}: {self.startDate.hour}:{self.startDate.minute}:{self.startDate.second} {datetime.datetime.now().tzinfo.tzname()}.
-                End of automated swiping scheduled at {self.endDate.year}-{self.endDate.month}-{self.endDate.day}: {self.endDate.hour}:{self.endDate.minute}:{self.endDate.second} {datetime.datetime.now().tzinfo.tzname()}
+                Start of automated swiping scheduled at {self.startDate.year}-{self.startDate.month:02}-{self.startDate.day:02}: {self.startDate.hour:02}:{self.startDate.minute:02}:{self.startDate.second:02}.
+                End of automated swiping scheduled at {self.endDate.year}-{self.endDate.month:02}-{self.endDate.day:02}: {self.endDate.hour:02}:{self.endDate.minute:02}:{self.endDate.second:02}.
                 """
         mail.SendMail("Notification: Swiping scheduled","Notification",info)
     
